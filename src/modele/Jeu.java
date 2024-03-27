@@ -16,7 +16,7 @@ import java.util.Scanner;
 
 public class Jeu extends Observable {
     public static final int SIZE_X = 30;
-    public static final int SIZE_Y = 10;
+    public static final int SIZE_Y = 30;
 
     private Heros heros;
 

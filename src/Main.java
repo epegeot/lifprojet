@@ -12,7 +12,6 @@ import modele.Jeu;
 public class Main {
     public static void main(String[] args) {
         Jeu jeu;
-        System.out.println("args.length = " + args.length +" " + args[0]);
         if (args.length > 0) {
             jeu = new Jeu(args[0]);
         } else {
