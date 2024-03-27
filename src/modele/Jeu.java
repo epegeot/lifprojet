@@ -43,6 +43,7 @@ public class Jeu extends Observable {
      */
     public void charger_jeu(String path) {
         // Charger la grille
+        System.out.println(path);
         File f = new File(path);
         Scanner fileScanner;
         try {
