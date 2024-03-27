@@ -190,4 +190,19 @@ public class Jeu extends Observable {
         return retour;
     }
 
+    public boolean jeuTermine() {
+        // Parcours de toutes les cases de la grille
+        for (int x = 0; x < SIZE_X; x++) {
+            for (int y = 0; y < SIZE_Y; y++) {
+                Case caseCourante = grilleEntites[x][y];
+                if (caseCourante.getEntite() instanceof Bloc) {
+                    if (!(caseCourante instanceof Piece)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
 }
