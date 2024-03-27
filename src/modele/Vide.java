@@ -9,6 +9,4 @@ public class Vide extends Case {
         return e == null;
     }
 
-
-
 }

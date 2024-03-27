@@ -29,9 +29,7 @@ public abstract class Entite extends Obj {
         return false;
     }
 
-
     public boolean avancerDirectionChoisie(Direction d) {
-
         return jeu.deplacerEntite(this, d);
     }
 

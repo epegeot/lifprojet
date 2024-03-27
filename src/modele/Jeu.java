@@ -12,24 +12,18 @@ import java.util.Observable;
 
 
 public class Jeu extends Observable {
-
     public static final int SIZE_X = 20;
     public static final int SIZE_Y = 10;
-
-
 
     private Heros heros;
 
     private HashMap<Case, Point> map = new  HashMap<Case, Point>(); // permet de récupérer la position d'une case à partir de sa référence
     private Case[][] grilleEntites = new Case[SIZE_X][SIZE_Y]; // permet de récupérer une case à partir de ses coordonnées
 
-
-
     public Jeu() {
         initialisationNiveau();
     }
-
-
+    
     
     public Case[][] getGrille() {
         return grilleEntites;
@@ -47,10 +41,6 @@ public class Jeu extends Observable {
 
     
     private void initialisationNiveau() {
-
-
-
-
         // murs extérieurs horizontaux
         for (int x = 0; x < 20; x++) {
             addCase(new Mur(this), x, 0);
@@ -78,8 +68,6 @@ public class Jeu extends Observable {
         grilleEntites[x][y] = e;
         map.put(e, new Point(x, y));
     }
-    
-
     
     /** Si le déplacement de l'entité est autorisé (pas de mur ou autre entité), il est réalisé
      * Sinon, rien n'est fait.
@@ -113,7 +101,6 @@ public class Jeu extends Observable {
         return retour;
     }
     
-    
     private Point calculerPointCible(Point pCourant, Direction d) {
         Point pCible = null;
         
@@ -128,8 +115,7 @@ public class Jeu extends Observable {
         return pCible;
     }
     
-
-    
+   
     /** Indique si p est contenu dans la grille
      */
     private boolean contenuDansGrille(Point p) {
