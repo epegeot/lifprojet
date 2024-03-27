@@ -94,6 +94,61 @@ public class VueControleur extends JFrame implements Observer {
         return new ImageIcon(image);
     }
 
+    public JMenuBar creerMenu() {
+        JMenuBar menuBar;
+        JMenu menu;
+        // Création de la barre de menu
+        menuBar = new JMenuBar();
+
+        // Création du menu "Niveau"
+        menu = new JMenu("Niveau");
+
+        // Ajout des éléments de menu de niveau 1 à 5
+        for (int i = 1; i <= 5; i++) {
+            JMenuItem menuItem = new JMenuItem("Niveau " + i);
+            final int level = i; // Utilisé dans l'écouteur d'événement
+            menuItem.addActionListener(e -> {
+                String fileName = "";
+                switch (level){
+                    case 1:
+                        fileName = "../game_files/niveau1.xsb";
+                        break;
+                    case 2:
+                        fileName = "../game_files/niveau2.xsb";
+                        break;
+                    case 3:
+                        fileName = "../game_files/niveau3.xsb";
+                        break;
+                    case 4:
+                        fileName = "../game_files/niveau4.xsb";
+                        break;
+                    case 5:
+                        fileName = "../game_files/niveau5.xsb";
+                        break;
+                    default:
+                        break;
+                }
+                //TODO
+                //Jeu j = new Jeu(fileName);
+            });
+            menu.add(menuItem);
+        }
+
+        JMenuItem menuPersonnalisee = new JMenuItem("Personnalisée");
+        menuPersonnalisee.addActionListener(e -> {
+            String fileName = JOptionPane.showInputDialog(null, "Entrez le nom du fichier :");
+            if (fileName != null && !fileName.isEmpty()) {
+                //TODO
+                //Jeu j = new Jeu(fileName);
+            }
+        });
+        menu.add(menuPersonnalisee);
+
+        // Ajout du menu à la barre de menu
+        menuBar.add(menu);
+        return menuBar;
+    }
+
     private void placerLesComposantsGraphiques() {
         setTitle("Sokoban");
         setSize(400, 250);
@@ -110,48 +165,47 @@ public class VueControleur extends JFrame implements Observer {
                 grilleJLabels.add(jlab);
             }
         }
+
+        // Création de l'instance du menu et obtention de sa barre de menu
+        JMenuBar menuBar = this.creerMenu();
+
+        // Ajout de la barre de menu à la fenêtre principale
+        setJMenuBar(menuBar);
+
         add(grilleJLabels);
     }
 
-    
+
+
     /**
      * Il y a une grille du côté du modèle ( jeu.getGrille() ) et une grille du côté de la vue (tabJLabel)
      */
     private void mettreAJourAffichage() {
-
-
-
         for (int x = 0; x < sizeX; x++) {
             for (int y = 0; y < sizeY; y++) {
-
                 Case c = jeu.getGrille()[x][y];
-
                 if (c != null) {
-
                     Entite e = c.getEntite();
-
-                    if (e!= null) {
-                        if (c.getEntite() instanceof Heros) {
+                    if (e != null) {
+                        if (e instanceof Heros) {
                             tabJLabel[x][y].setIcon(icoHero);
-                        } else if (c.getEntite() instanceof Bloc) {
+                        } else if (e instanceof Bloc) {
                             tabJLabel[x][y].setIcon(icoBloc);
                         }
                     } else {
-                        if (jeu.getGrille()[x][y] instanceof Mur) {
+                        if (c instanceof Mur) {
                             tabJLabel[x][y].setIcon(icoMur);
-                        } else if (jeu.getGrille()[x][y] instanceof Vide) {
-
+                        } else if (c instanceof Piece) {
+                            tabJLabel[x][y].setIcon(icoPiece);
+                        } else if (c instanceof Vide) {
                             tabJLabel[x][y].setIcon(icoVide);
                         }
                     }
-
-
-
                 }
-
             }
         }
     }
+
 
     @Override
     public void update(Observable o, Object arg) {
@@ -172,7 +226,7 @@ public class VueControleur extends JFrame implements Observer {
                     public void run() {
                         mettreAJourAffichage();
                     }
-                }); 
+                });
         */
 
     }
