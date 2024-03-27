@@ -23,6 +23,8 @@ public class Jeu extends Observable {
     private HashMap<Case, Point> map = new  HashMap<Case, Point>(); // permet de récupérer la position d'une case à partir de sa référence
     private Case[][] grilleEntites = new Case[SIZE_X][SIZE_Y]; // permet de récupérer une case à partir de ses coordonnées
 
+    private int nombreCoups = 0;
+    
     public Jeu() {
         initialisationNiveau();
     }
@@ -84,7 +86,11 @@ public class Jeu extends Observable {
         return heros;
     }
 
+    public int getNombreCoups() {
+        return this.nombreCoups;
+    }
     public void deplacerHeros(Direction d) {
+        this.nombreCoups++;
         heros.avancerDirectionChoisie(d);
         setChanged();
         notifyObservers();
