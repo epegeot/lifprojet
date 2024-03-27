@@ -156,7 +156,7 @@ public class VueControleur extends JFrame implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         if (jeu.jeuTermine()) {
-            System.out.println("Jeu terminé");
+            System.out.println("Jeu terminé en " + jeu.getNombreCoups() + " coups.");
             System.exit(1);
         }
 

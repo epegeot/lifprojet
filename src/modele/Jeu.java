@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Scanner;
 
+import modele.scores.GestionnaireScores;
+
 
 public class Jeu extends Observable {
     public static final int SIZE_X = 30;
@@ -20,33 +22,44 @@ public class Jeu extends Observable {
 
     private Heros heros;
 
-    private HashMap<Case, Point> map = new  HashMap<Case, Point>(); // permet de récupérer la position d'une case à partir de sa référence
+    private HashMap<Case, Point> map = new HashMap<Case, Point>(); // permet de récupérer la position d'une case à partir de sa référence
     private Case[][] grilleEntites = new Case[SIZE_X][SIZE_Y]; // permet de récupérer une case à partir de ses coordonnées
+
+    private int nombreCoups = 0;
+    
+    private GestionnaireScores gestionnaireScores;
+    private String scoresPath;
 
     public Jeu() {
         initialisationNiveau();
     }
 
+    public Jeu(String path) {
+        charger_jeu(path);
+    }
+
     /**
      * Charge un fichier format .xsb pour initialiser le jeu
      * @param path the path to the file
+     * @todo : Faire une méthode pour charger un niveau sauvegardé en .xsbe
      */
-    public Jeu(String path) {
+    public void charger_jeu(String path) {
+        // Charger la grille
         File f = new File(path);
         Scanner fileScanner;
         try {
             fileScanner = new Scanner(f);
         } catch (FileNotFoundException e) {
-            System.out.println("Fichier non trouvé");
+            System.out.println("Fichier de jeu non trouvé");
             System.exit(1);
             return; // Obligé de le mentionner sinon le langage pense qu'on est pas sortis
         }
         fileScanner.useDelimiter("\n");
         
         remplirGrilleDeVide();
-        int x = 0;
+        int y = 0;
         while (fileScanner.hasNext()) {
-            int y = 0;
+            int x = 0;
 
             String l = fileScanner.next();
             Scanner lineScanner = new Scanner(l);
@@ -68,12 +81,16 @@ public class Jeu extends Observable {
                 } else if (c.equals("$")) {
                     new Bloc(this, grilleEntites[x][y]);
                 }
-                y++;
+                x++;
             }
-            x++;
+            y++;
             lineScanner.close();
         }
         fileScanner.close();
+
+        // Charger les scores
+        scoresPath = path.replace(".xsb", ".xsb.scores");
+        gestionnaireScores = new GestionnaireScores(scoresPath);
     }
 
     public Case[][] getGrille() {
@@ -84,16 +101,21 @@ public class Jeu extends Observable {
         return heros;
     }
 
+    public int getNombreCoups() {
+        return this.nombreCoups;
+    }
     public void deplacerHeros(Direction d) {
+        this.nombreCoups++;
         heros.avancerDirectionChoisie(d);
         setChanged();
         notifyObservers();
     }
 
     private void remplirGrilleDeVide() {
+        map = new HashMap<Case, Point>();
         for (int x = 0; x < SIZE_X; x++) {
             for (int y = 0; y < SIZE_Y; y++) {
-                grilleEntites[x][y] = new Vide(this);
+                this.addCase(new Vide(this), x, y);
             }
         }
     }
