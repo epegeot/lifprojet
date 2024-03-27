@@ -7,12 +7,15 @@ package modele;
 
 
 import java.awt.Point;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Observable;
+import java.util.Scanner;
 
 
 public class Jeu extends Observable {
-    public static final int SIZE_X = 20;
+    public static final int SIZE_X = 30;
     public static final int SIZE_Y = 10;
 
     private Heros heros;
@@ -23,8 +26,56 @@ public class Jeu extends Observable {
     public Jeu() {
         initialisationNiveau();
     }
-    
-    
+
+    /**
+     * Charge un fichier format .xsb pour initialiser le jeu
+     * @param path the path to the file
+     */
+    public Jeu(String path) {
+        File f = new File(path);
+        Scanner fileScanner;
+        try {
+            fileScanner = new Scanner(f);
+        } catch (FileNotFoundException e) {
+            System.out.println("Fichier non trouvé");
+            System.exit(1);
+            return; // Obligé de le mentionner sinon le langage pense qu'on est pas sortis
+        }
+        fileScanner.useDelimiter("\n");
+        
+        remplirGrilleDeVide();
+        int x = 0;
+        while (fileScanner.hasNext()) {
+            int y = 0;
+
+            String l = fileScanner.next();
+            Scanner lineScanner = new Scanner(l);
+            lineScanner.useDelimiter("");
+            while (lineScanner.hasNext()) {
+                String c = lineScanner.next();
+                // Types cases
+                if (c.equals("#")) {
+                    addCase(new Mur(this), x, y);
+                } else if (c.equals(".")) {
+                    addCase(new Piece(this), x, y);
+                } else { // Toute case (non mur) ET (non pièce) est vide
+                    addCase(new Vide(this), x, y);
+                }
+
+                // Types entités
+                if (c.equals("@")) {
+                    heros = new Heros(this, grilleEntites[x][y]);
+                } else if (c.equals("$")) {
+                    new Bloc(this, grilleEntites[x][y]);
+                }
+                y++;
+            }
+            x++;
+            lineScanner.close();
+        }
+        fileScanner.close();
+    }
+
     public Case[][] getGrille() {
         return grilleEntites;
     }
@@ -39,6 +90,13 @@ public class Jeu extends Observable {
         notifyObservers();
     }
 
+    private void remplirGrilleDeVide() {
+        for (int x = 0; x < SIZE_X; x++) {
+            for (int y = 0; y < SIZE_Y; y++) {
+                grilleEntites[x][y] = new Vide(this);
+            }
+        }
+    }
     
     private void initialisationNiveau() {
         // murs extérieurs horizontaux
