@@ -1,4 +1,4 @@
-package modele.scores;
+package modele;
 
 import java.io.BufferedWriter;
 import java.io.File;

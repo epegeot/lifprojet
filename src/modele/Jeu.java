@@ -13,8 +13,6 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Scanner;
 
-import modele.scores.GestionnaireScores;
-
 
 public class Jeu extends Observable {
     public static final int SIZE_X = 30;

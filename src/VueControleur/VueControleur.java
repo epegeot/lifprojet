@@ -110,19 +110,19 @@ public class VueControleur extends JFrame implements Observer {
                 String fileName = "";
                 switch (level){
                     case 1:
-                        fileName = "../game_files/niveau1.xsb";
+                        fileName = "game_files/niveau1.xsb";
                         break;
                     case 2:
-                        fileName = "../game_files/niveau2.xsb";
+                        fileName = "game_files/niveau2.xsb";
                         break;
                     case 3:
-                        fileName = "../game_files/niveau3.xsb";
+                        fileName = "game_files/niveau3.xsb";
                         break;
                     case 4:
-                        fileName = "../game_files/niveau4.xsb";
+                        fileName = "game_files/niveau4.xsb";
                         break;
                     case 5:
-                        fileName = "../game_files/niveau5.xsb";
+                        fileName = "game_files/niveau5.xsb";
                         break;
                     default:
                         break;

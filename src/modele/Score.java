@@ -1,3 +1,4 @@
+package modele;
 public class Score {
     private String nom;
     private int score;
