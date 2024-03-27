@@ -66,7 +66,6 @@ public class VueControleur extends JFrame implements Observer {
                     case KeyEvent.VK_DOWN : jeu.deplacerHeros(Direction.bas); break;
                     case KeyEvent.VK_UP : jeu.deplacerHeros(Direction.haut); break;
 
-
                 }
             }
         });
@@ -128,18 +127,16 @@ public class VueControleur extends JFrame implements Observer {
                     default:
                         break;
                 }
-                //TODO
-                //Jeu j = new Jeu(fileName);
+                jeu.charger_jeu(fileName);
             });
             menu.add(menuItem);
         }
 
-        JMenuItem menuPersonnalisee = new JMenuItem("Personnalisée");
+        JMenuItem menuPersonnalisee = new JMenuItem("Personnalisé");
         menuPersonnalisee.addActionListener(e -> {
             String fileName = JOptionPane.showInputDialog(null, "Entrez le nom du fichier :");
             if (fileName != null && !fileName.isEmpty()) {
-                //TODO
-                //Jeu j = new Jeu(fileName);
+                jeu.charger_jeu(fileName);
             }
         });
         menu.add(menuPersonnalisee);

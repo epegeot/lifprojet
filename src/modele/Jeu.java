@@ -91,6 +91,10 @@ public class Jeu extends Observable {
         // Charger les scores
         scoresPath = path.replace(".xsb", ".xsb.scores");
         gestionnaireScores = new GestionnaireScores(scoresPath);
+        nombreCoups = 0;
+
+        setChanged();
+        notifyObservers();
     }
 
     public Case[][] getGrille() {
