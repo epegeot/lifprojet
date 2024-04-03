@@ -20,13 +20,17 @@ public class Jeu extends Observable {
 
     private Heros heros;
 
+    // Grille
     private HashMap<Case, Point> map = new HashMap<Case, Point>(); // permet de récupérer la position d'une case à partir de sa référence
     private Case[][] grilleEntites = new Case[SIZE_X][SIZE_Y]; // permet de récupérer une case à partir de ses coordonnées
 
+    // Score
     private int nombreCoups = 0;
-    
     private GestionnaireScores gestionnaireScores;
     private String scoresPath;
+
+    // Undo / Redo via commits
+    private CommitsFollower<String> commitFollowers = new CommitsFollower<>();
 
     public Jeu() {
         initialisationNiveau();
@@ -45,6 +49,7 @@ public class Jeu extends Observable {
         // Charger la grille
         File f = new File(path);
         Scanner fileScanner;
+
         try {
             fileScanner = new Scanner(f);
         } catch (FileNotFoundException e) {
@@ -54,7 +59,30 @@ public class Jeu extends Observable {
         }
         fileScanner.useDelimiter("\n");
         
+        parseFile(fileScanner);
+        fileScanner.close();
+
+        // Charger les scores
+        scoresPath = path.replace(".xsb", ".xsb.scores");
+        gestionnaireScores = new GestionnaireScores(scoresPath);
+
+        // Undo / Redo
+        this.commitFollowers = new CommitsFollower<>();
+
+        setChanged();
+        notifyObservers();
+    }
+
+    /**
+     * Charge le jeu à partir d'un scanner, lit le nombre de coup et autre
+     * 
+     * @param fileScanner : A scanner to the part of a .xsb file containing the grid
+     */
+    public void parseFile(Scanner fileScanner) {
         remplirGrilleDeVide();
+
+        fileScanner.useDelimiter("\n");
+        this.nombreCoups = fileScanner.nextInt();
         int y = 0;
         while (fileScanner.hasNext()) {
             int x = 0;
@@ -84,15 +112,6 @@ public class Jeu extends Observable {
             y++;
             lineScanner.close();
         }
-        fileScanner.close();
-
-        // Charger les scores
-        scoresPath = path.replace(".xsb", ".xsb.scores");
-        gestionnaireScores = new GestionnaireScores(scoresPath);
-        nombreCoups = 0;
-
-        setChanged();
-        notifyObservers();
     }
 
     public Case[][] getGrille() {
@@ -106,9 +125,49 @@ public class Jeu extends Observable {
     public int getNombreCoups() {
         return this.nombreCoups;
     }
+
     public void deplacerHeros(Direction d) {
+        // On commit, on joue un coup, on avance
+        this.commitFollowers.addCommit(this.nombreCoups, this.toString());
         this.nombreCoups++;
         heros.avancerDirectionChoisie(d);
+        setChanged();
+        notifyObservers();
+    }
+
+    /**
+     * Undos a move
+     */
+    public void undo() {
+        String gameExportLastCommit;
+        try {
+            gameExportLastCommit = this.commitFollowers.getCommit(this.nombreCoups - 1);
+            // this.nombreCoups--; // Le nombre de coups est stocké dans le fichier de sauvegarde
+        } catch (IndexOutOfBoundsException e) {
+            return;
+        }
+
+        Scanner sc = new Scanner(gameExportLastCommit);
+        parseFile(sc);
+        sc.close();
+
+        setChanged();
+        notifyObservers();
+    }
+
+    public void redo() {
+        String gameExportNextCommit;
+        try {
+            gameExportNextCommit = this.commitFollowers.getCommit(this.nombreCoups + 1);
+            // this.nombreCoups++; // Le nombre de coups est stocké dans le fichier de sauvegarde
+        } catch (IndexOutOfBoundsException e) {
+            return;
+        }
+
+        Scanner sc = new Scanner(gameExportNextCommit);
+        parseFile(sc);
+        sc.close();
+
         setChanged();
         notifyObservers();
     }
@@ -123,6 +182,7 @@ public class Jeu extends Observable {
     }
     
     private void initialisationNiveau() {
+        remplirGrilleDeVide();
         // murs extérieurs horizontaux
         for (int x = 0; x < 20; x++) {
             addCase(new Mur(this), x, 0);
@@ -139,7 +199,6 @@ public class Jeu extends Observable {
             for (int y = 1; y < 9; y++) {
                 addCase(new Vide(this), x, y);
             }
-
         }
 
         heros = new Heros(this, grilleEntites[4][4]);
@@ -191,13 +250,10 @@ public class Jeu extends Observable {
             case bas : pCible = new Point(pCourant.x, pCourant.y + 1); break;
             case gauche : pCible = new Point(pCourant.x - 1, pCourant.y); break;
             case droite : pCible = new Point(pCourant.x + 1, pCourant.y); break;     
-            
         }
-        
         return pCible;
     }
     
-   
     /** Indique si p est contenu dans la grille
      */
     private boolean contenuDansGrille(Point p) {
@@ -214,6 +270,11 @@ public class Jeu extends Observable {
         return retour;
     }
 
+    /**
+     * Regarde si le jeu est terminé
+     * Le jeu est terminé SSI toutes les cases de type Pièce sont recouvertes d'une entité de type Bloc
+     * @return a boolean representing if the game is stopped
+     */
     public boolean jeuTermine() {
         // Parcours de toutes les cases de la grille
         for (int x = 0; x < SIZE_X; x++) {
@@ -229,4 +290,29 @@ public class Jeu extends Observable {
         return true;
     }
 
+    /**
+     * Returns a .xsbe file representing the current state of the game
+     * Meaning a xsb file with the current state of the game with on line one the current score
+     */
+    public String toString() {
+        String s = "";
+        s += this.nombreCoups + "\n";
+        for (int y = 0; y < SIZE_Y; y++) {
+            for (int x = 0; x < SIZE_X; x++) {
+                if (grilleEntites[x][y] instanceof Mur) {
+                    s += "#";
+                } else if (grilleEntites[x][y] instanceof Piece) {
+                    s += ".";
+                } else if (grilleEntites[x][y].getEntite() instanceof Heros) {
+                    s += "@";
+                } else if (grilleEntites[x][y].getEntite() instanceof Bloc) {
+                    s += "$";
+                } else {
+                    s += " ";
+                }
+            }
+            s += "\n";
+        }
+        return s;
+    }
 }

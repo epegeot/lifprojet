@@ -1,6 +1,8 @@
 package VueControleur;
 
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -93,20 +95,20 @@ public class VueControleur extends JFrame implements Observer {
         return new ImageIcon(image);
     }
 
-    public JMenuBar creerMenu() {
+    private JMenuBar creerMenu() {
         JMenuBar menuBar;
-        JMenu menu;
+        JMenu menuNiveau;
         // Création de la barre de menu
         menuBar = new JMenuBar();
 
         // Création du menu "Niveau"
-        menu = new JMenu("Niveau");
+        menuNiveau = new JMenu("Niveau");
 
         // Ajout des éléments de menu de niveau 1 à 5
         for (int i = 1; i <= 5; i++) {
-            JMenuItem menuItem = new JMenuItem("Niveau " + i);
+            JMenuItem optionMenu = new JMenuItem("Niveau " + i);
             final int level = i; // Utilisé dans l'écouteur d'événement
-            menuItem.addActionListener(e -> {
+            optionMenu.addActionListener(e -> {
                 String fileName = "";
                 switch (level){
                     case 1:
@@ -129,20 +131,42 @@ public class VueControleur extends JFrame implements Observer {
                 }
                 jeu.charger_jeu(fileName);
             });
-            menu.add(menuItem);
+            menuNiveau.add(optionMenu);
         }
 
-        JMenuItem menuPersonnalisee = new JMenuItem("Personnalisé");
-        menuPersonnalisee.addActionListener(e -> {
-            String fileName = JOptionPane.showInputDialog(null, "Entrez le nom du fichier :");
-            if (fileName != null && !fileName.isEmpty()) {
-                jeu.charger_jeu(fileName);
+        JMenuItem optionPersonalisee = new JMenuItem("Personnalisé");
+        optionPersonalisee.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String fileName = JOptionPane.showInputDialog(null, "Entrez le nom du fichier :");
+                if (fileName != null && !fileName.isEmpty()) {
+                    jeu.charger_jeu(fileName);
+                }
             }
         });
-        menu.add(menuPersonnalisee);
+        menuNiveau.add(optionPersonalisee);
 
+        // PARTIE UNDO/REDO
+        JMenu menuUndoRedo = new JMenu("Undo/Redo");
+
+        JMenuItem optionUndo = new JMenuItem("Undo");
+        optionUndo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                jeu.undo();
+            }
+        });
+        menuUndoRedo.add(optionUndo);
+
+        JMenuItem optionRedo = new JMenuItem("Redo");
+        optionRedo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                jeu.redo();
+            }
+        });
+        menuUndoRedo.add(optionRedo);
+
+        menuBar.add(menuUndoRedo);
         // Ajout du menu à la barre de menu
-        menuBar.add(menu);
+        menuBar.add(menuNiveau);
         return menuBar;
     }
 
