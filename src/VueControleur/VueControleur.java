@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
@@ -40,7 +41,6 @@ public class VueControleur extends JFrame implements Observer {
 
 
     private JLabel[][] tabJLabel; // cases graphique (au moment du rafraichissement, chaque case va être associée à une icône, suivant ce qui est présent dans le modèle)
-
 
     public VueControleur(Jeu _jeu) {
         sizeX = jeu.SIZE_X;
@@ -230,11 +230,6 @@ public class VueControleur extends JFrame implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        if (jeu.jeuTermine()) {
-            System.out.println("Jeu terminé en " + jeu.getNombreCoups() + " coups.");
-            System.exit(1);
-        }
-
         mettreAJourAffichage();
         /*
 
@@ -249,6 +244,53 @@ public class VueControleur extends JFrame implements Observer {
                     }
                 });
         */
+
+        if (jeu.jeuTermine()) {
+            String pseudo = JOptionPane.showInputDialog(null, "Jeu terminé en " + jeu.getNombreCoups() + " coups.\nEntrez votre pseudo :");
+            if (pseudo != null && !pseudo.isEmpty()) {
+                System.out.println("Pseudo entré " + pseudo);
+            }
+            else {
+                System.out.println("Jeu fermé.");
+                System.exit(0);
+            }
+            int choix = JOptionPane.showOptionDialog(null,
+                    "Que voulez-vous faire "+pseudo+"?", "Fin de jeu",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    new String[]{"Sauvegarder Score", "Fermer"},
+                    "Fermer");
+
+            if (choix == JOptionPane.YES_OPTION) {
+                jeu.gestionnaireScores.addScore(pseudo, jeu.getNombreCoups());
+                jeu.gestionnaireScores.export(jeu.scoresPath);
+                StringBuilder message = new StringBuilder();
+                message.append("Meilleurs scores :\n");
+
+                // Récupérer les trois premiers scores
+                List<Score> topScores = jeu.gestionnaireScores.getNFirst(3);
+
+                // Parcourir les scores et les ajouter au message
+                int position = 1;
+                for (Score score : topScores) {
+                    message.append(position).append(". ");
+                    message.append(score.toString()).append("\n");
+                    position++;
+                }
+
+                String[] options = {"Fermer"};
+                int option_selected = JOptionPane.showOptionDialog(null, message.toString(), "Meilleurs Scores", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                if (option_selected == 0) {
+                    System.exit(0);
+                }
+            }
+            else if (choix == JOptionPane.NO_OPTION) {
+                System.out.println("Jeu fermé.");
+                System.exit(0);
+            }
+        }
+
 
     }
 }

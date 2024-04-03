@@ -26,8 +26,9 @@ public class Jeu extends Observable {
 
     // Score
     private int nombreCoups = 0;
-    private GestionnaireScores gestionnaireScores;
-    private String scoresPath;
+    
+    public GestionnaireScores gestionnaireScores;
+    public String scoresPath;
 
     // Undo / Redo via commits
     private CommitsFollower<String> commitFollowers = new CommitsFollower<>();
@@ -47,6 +48,7 @@ public class Jeu extends Observable {
      */
     public void charger_jeu(String path) {
         // Charger la grille
+        System.out.println(path);
         File f = new File(path);
         Scanner fileScanner;
 
@@ -209,15 +211,15 @@ public class Jeu extends Observable {
         grilleEntites[x][y] = e;
         map.put(e, new Point(x, y));
     }
-    
+
     /** Si le déplacement de l'entité est autorisé (pas de mur ou autre entité), il est réalisé
      * Sinon, rien n'est fait.
      */
     public boolean deplacerEntite(Entite e, Direction d) {
         boolean retour = true;
-        
+
         Point pCourant = map.get(e.getCase());
-        
+
         Point pCible = calculerPointCible(pCourant, d);
 
         if (contenuDansGrille(pCible)) {
@@ -228,9 +230,16 @@ public class Jeu extends Observable {
 
             // si la case est libérée
             if (caseALaPosition(pCible).peutEtreParcouru()) {
-                e.getCase().quitterLaCase();
-                caseALaPosition(pCible).entrerSurLaCase(e);
 
+
+                // Vérifier si le bloc est sur une pièce et collé à un mur
+                if (eCible instanceof Bloc && caseALaPosition(pCible) instanceof Piece && estColleAuMur(pCible)) {
+                    retour = false;
+                }
+                else{
+                    e.getCase().quitterLaCase();
+                    caseALaPosition(pCible).entrerSurLaCase(e);
+                }
             } else {
                 retour = false;
             }
@@ -241,7 +250,19 @@ public class Jeu extends Observable {
 
         return retour;
     }
-    
+
+    private boolean estColleAuMur(Point p) {
+        int x = p.x;
+        int y = p.y;
+        Case c = grilleEntites[x][y];
+
+        // Vérifier si la case est collée à un mur dans les 4 directions
+        return (x - 1 >= 0 && grilleEntites[x - 1][y] instanceof Mur) ||
+                (x + 1 < SIZE_X && grilleEntites[x + 1][y] instanceof Mur) ||
+                (y - 1 >= 0 && grilleEntites[x][y - 1] instanceof Mur) ||
+                (y + 1 < SIZE_Y && grilleEntites[x][y + 1] instanceof Mur);
+    }
+
     private Point calculerPointCible(Point pCourant, Direction d) {
         Point pCible = null;
         
