@@ -5,11 +5,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 
 public class GestionnaireScores {
-    private Score[] scores = new Score[0];
+    private ArrayList<Score> scores = new ArrayList<>();
     
     /**
      * Constructeur de la classe, les données sont de la forme "nom:score"
@@ -44,18 +45,9 @@ public class GestionnaireScores {
      * @param score
      */
     public void addScore(String nom, int score) {
-        for (int i = 0; i < scores.length; i++) {
-            if (score > scores[i].getScore()) {
-                Score[] newScores = new Score[scores.length + 1];
-                for (int j = 0; j < i; j++) {
-                    newScores[j] = scores[j];
-                }
-                newScores[i] = new Score(nom, score);
-                for (int j = i; j < scores.length; j++) {
-                    newScores[j + 1] = scores[j];
-                }
-                scores = newScores;
-                return;
+        for (int i = 0; i < scores.size(); i++) {
+            if (score > scores.get(i).getScore()) {
+                scores.add(i, new Score(nom, score));
             }
         }
     }
