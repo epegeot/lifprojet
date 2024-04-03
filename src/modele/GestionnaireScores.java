@@ -70,4 +70,13 @@ public class GestionnaireScores {
             return; // Obligé de le mentionner sinon le langage pense qu'on est pas sortis
         }
     }
+
+    /**
+     * 
+     * @param n the number of players wanted
+     * @return An array of Score
+     */
+    public ArrayList<Score> getNFirst(int n) {
+        return (ArrayList) this.scores.subList(0, n);
+    }
 }
