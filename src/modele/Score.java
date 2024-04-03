@@ -16,4 +16,9 @@ public class Score {
         return score;
     }
 
+    @Override
+    public String toString() {
+        return nom + " avec un score de " + score + " coups ";
+    }
+
 }
