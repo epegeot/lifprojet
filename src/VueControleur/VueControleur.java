@@ -38,6 +38,10 @@ public class VueControleur extends JFrame implements Observer {
     private ImageIcon icoBloc;
 
     private ImageIcon icoPiece;
+    private ImageIcon icoPorteFermee;
+    private ImageIcon icoPorteOuverte;
+    private ImageIcon icoBouton;
+    private ImageIcon icoBoutonAppuye;
 
 
     private JLabel[][] tabJLabel; // cases graphique (au moment du rafraichissement, chaque case va être associée à une icône, suivant ce qui est présent dans le modèle)
@@ -80,6 +84,11 @@ public class VueControleur extends JFrame implements Observer {
         icoMur = chargerIcone("Images/Mur.png");
         icoBloc = chargerIcone("Images/Colonne.png");
         icoPiece = chargerIcone("Images/Piece.png");
+
+        icoPorteFermee = chargerIcone("Images/Mur.png");
+        icoPorteOuverte = chargerIcone("Images/Vide.png");
+        icoBouton = chargerIcone("Images/Fantome.png");
+        icoBoutonAppuye = chargerIcone("Images/Fantome.png");
     }
 
     private ImageIcon chargerIcone(String urlIcone) {
@@ -214,12 +223,20 @@ public class VueControleur extends JFrame implements Observer {
                             tabJLabel[x][y].setIcon(icoBloc);
                         }
                     } else {
-                        if (c instanceof Mur) {
-                            tabJLabel[x][y].setIcon(icoMur);
-                        } else if (c instanceof Piece) {
+                        if (c instanceof Piece) {
                             tabJLabel[x][y].setIcon(icoPiece);
-                        } else if (c instanceof Vide) {
+                        } else if (c instanceof Bouton) {
+                            tabJLabel[x][y].setIcon(icoBouton);
+                        } else if (c instanceof Porte) {
+                            if (((Porte) c).peutEtreParcouru()) {
+                                tabJLabel[x][y].setIcon(icoPorteOuverte);
+                            } else {
+                                tabJLabel[x][y].setIcon(icoPorteFermee);
+                            }
+                        } else if (c instanceof Vide) { // On mets les types plus "génériques" après
                             tabJLabel[x][y].setIcon(icoVide);
+                        } else if (c instanceof Mur) {
+                            tabJLabel[x][y].setIcon(icoMur);
                         }
                     }
                 }

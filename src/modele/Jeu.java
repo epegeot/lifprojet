@@ -78,6 +78,7 @@ public class Jeu extends Observable {
     /**
      * Charge le jeu à partir d'un scanner, lit le nombre de coup et autre
      * 
+     * B : Bouton avec bloc dessus, b : bouton, D : porte, @ : heros, $ : bloc, . : pièce, # : mur
      * @param fileScanner : A scanner to the part of a .xsb file containing the grid
      */
     public void parseFile(Scanner fileScanner) {
@@ -99,14 +100,18 @@ public class Jeu extends Observable {
                     addCase(new Mur(this), x, y);
                 } else if (c.equals(".")) {
                     addCase(new Piece(this), x, y);
+                } else if (c.equals("B") || c.equals("b")) {
+                    addCase(new Bouton(this), x, y);
+                } else if (c.equals("D")) {
+                    addCase(new Porte(this), x, y);
                 } else { // Toute case (non mur) ET (non pièce) est vide
                     addCase(new Vide(this), x, y);
-                }
+                } 
 
                 // Types entités
                 if (c.equals("@")) {
                     heros = new Heros(this, grilleEntites[x][y]);
-                } else if (c.equals("$")) {
+                } else if (c.equals("$") || c.equals("B")) {
                     new Bloc(this, grilleEntites[x][y]);
                 }
                 x++;
