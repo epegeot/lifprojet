@@ -230,12 +230,28 @@ public class Jeu extends Observable {
         if (contenuDansGrille(pCible)) {
             Entite eCible = caseALaPosition(pCible).getEntite();
             if (eCible != null) {
+                Point pieceCible = null;
+                switch(d) {
+                    case haut: pieceCible = new Point(pCible.x, pCible.y - 1); break;
+                    case bas : pieceCible = new Point(pCible.x, pCible.y + 1); break;
+                    case gauche : pieceCible = new Point(pCible.x - 1, pCible.y); break;
+                    case droite : pieceCible = new Point(pCible.x + 1, pCible.y); break;
+                }
+                if(caseALaPosition(pieceCible) instanceof Piece) {
+                    System.out.println("piece");
+                    Son son = new Son("audio/piece.wav");
+                    son.jouerSon();
+                }
+                else {
+                    System.out.println("hey");
+                    Son son = new Son("audio/movement.wav");
+                    son.jouerSon();
+                }
                 eCible.pousser(d);
             }
 
             // si la case est libérée
             if (caseALaPosition(pCible).peutEtreParcouru()) {
-
 
                 // Vérifier si le bloc est sur une pièce et collé à un mur
                 if (eCible instanceof Bloc && caseALaPosition(pCible) instanceof Piece && estColleAuMur(pCible)) {
@@ -252,7 +268,6 @@ public class Jeu extends Observable {
         } else {
             retour = false;
         }
-
         return retour;
     }
 
@@ -296,6 +311,15 @@ public class Jeu extends Observable {
         return retour;
     }
 
+    public boolean estPieceAvecBloc(Point p) {
+        if (contenuDansGrille(p)) {
+            Case caseCourante = grilleEntites[p.x][p.y];
+            return caseCourante instanceof Piece && caseCourante.getEntite() instanceof Bloc;
+        }
+        return false;
+    }
+
+
     /**
      * Regarde si le jeu est terminé
      * Le jeu est terminé SSI toutes les cases de type Pièce sont recouvertes d'une entité de type Bloc
@@ -313,6 +337,8 @@ public class Jeu extends Observable {
                 }
             }
         }
+        Son s = new Son("audio/win.wav");
+        s.jouerSon();
         return true;
     }
 
