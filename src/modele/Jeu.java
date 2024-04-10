@@ -238,12 +238,10 @@ public class Jeu extends Observable {
                     case droite : pieceCible = new Point(pCible.x + 1, pCible.y); break;
                 }
                 if(caseALaPosition(pieceCible) instanceof Piece) {
-                    System.out.println("piece");
                     Son son = new Son("audio/piece.wav");
                     son.jouerSon();
                 }
                 else {
-                    System.out.println("hey");
                     Son son = new Son("audio/movement.wav");
                     son.jouerSon();
                 }
