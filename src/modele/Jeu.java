@@ -335,8 +335,6 @@ public class Jeu extends Observable {
                 }
             }
         }
-        Son s = new Son("audio/win.wav");
-        s.jouerSon();
         return true;
     }
 

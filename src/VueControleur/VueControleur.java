@@ -260,6 +260,10 @@ public class VueControleur extends JFrame implements Observer {
         */
 
         if (jeu.jeuTermine()) {
+            // Jouer du son
+            Son s = new Son("audio/win.wav");
+            s.jouerSon();
+
             String pseudo = JOptionPane.showInputDialog(null, "Jeu terminé en " + jeu.getNombreCoups() + " coups.\nEntrez votre pseudo :");
             if (pseudo != null && !pseudo.isEmpty()) {
                 System.out.println("Pseudo entré " + pseudo);

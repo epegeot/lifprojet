@@ -12,6 +12,6 @@ public class Bouton extends Vide {
         }
 
         public boolean estActif() {
-            return !(this.getEntite() == null);
+            return this.getEntite() != null;
         }
 }
