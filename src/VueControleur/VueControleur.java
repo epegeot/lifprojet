@@ -79,16 +79,16 @@ public class VueControleur extends JFrame implements Observer {
 
 
     private void chargerLesIcones() {
-        icoHero = chargerIcone("Images/Pacman.png");
+        icoHero = chargerIcone("Images/Heros.png");
         icoVide = chargerIcone("Images/Vide.png");
         icoMur = chargerIcone("Images/Mur.png");
-        icoBloc = chargerIcone("Images/Colonne.png");
-        icoPiece = chargerIcone("Images/Piece.png");
+        icoBloc = chargerIcone("Images/Caisse.png");
+        icoPiece = chargerIcone("Images/Objectif.png");
 
-        icoPorteFermee = chargerIcone("Images/Mur.png");
+        icoPorteFermee = chargerIcone("Images/Porte.png");
         icoPorteOuverte = chargerIcone("Images/Vide.png");
-        icoBouton = chargerIcone("Images/Fantome.png");
-        icoBoutonAppuye = chargerIcone("Images/Fantome.png");
+        icoBouton = chargerIcone("Images/Bouton.png");
+        icoBoutonAppuye = chargerIcone("Images/Bouton.png");
     }
 
     private ImageIcon chargerIcone(String urlIcone) {
@@ -181,7 +181,7 @@ public class VueControleur extends JFrame implements Observer {
 
     private void placerLesComposantsGraphiques() {
         setTitle("Sokoban");
-        setSize(400, 250);
+        setSize(1500, 1000);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // permet de terminer l'application à la fermeture de la fenêtre
 
         JComponent grilleJLabels = new JPanel(new GridLayout(sizeY, sizeX)); // grilleJLabels va contenir les cases graphiques et les positionner sous la forme d'une grille
@@ -204,8 +204,6 @@ public class VueControleur extends JFrame implements Observer {
 
         add(grilleJLabels);
     }
-
-
 
     /**
      * Il y a une grille du côté du modèle ( jeu.getGrille() ) et une grille du côté de la vue (tabJLabel)
@@ -243,7 +241,6 @@ public class VueControleur extends JFrame implements Observer {
             }
         }
     }
-
 
     @Override
     public void update(Observable o, Object arg) {
